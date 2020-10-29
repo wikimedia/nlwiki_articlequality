@@ -68,5 +68,3 @@ def run(paths, threads, namespaces, output):
         # Write the label to the output
         output.write(json.dumps({'rev_id': rev_id, 'label': label}) + "\n")
         
-if __name__ == "__main__":
-    main()

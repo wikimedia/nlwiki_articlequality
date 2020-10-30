@@ -50,16 +50,14 @@ def run(paths, threads, output):
             template_appeared = False
             for revision in page:
                 try:
-                    if not template_appeared and TEMPLATE_RE.search(revision.text): #TODO: Make sure this evaluated to False when we don't find anything
+                    if not template_appeared and TEMPLATE_RE.search(revision.text, flags=re.IGNORECASE): #TODO: Make sure this evaluated to False when we don't find anything
                         template_appeared = True
                         yield revision.id, "E"
-                    elif template_appeared and not TEMPLATE_RE.search(revision.text):
+                    elif template_appeared and not TEMPLATE_RE.search(revision.text, flags=re.IGNORECASE):
                         yield revision.id, "D"
                         break
                 except TypeError:
                     print("Revision.text was not a string")
-                else:
-                    print("Revision.text was a string")
     
     for rev_id, label in mwxml.map(process_template_changes, paths, threads):
         # Write the label to the output

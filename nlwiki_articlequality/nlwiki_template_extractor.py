@@ -50,10 +50,10 @@ def run(paths, threads, output):
             template_appeared = False
             for revision in page:
                 try:
-                    if not template_appeared and TEMPLATE_RE.search(revision.text, flags=re.IGNORECASE): #TODO: Make sure this evaluated to False when we don't find anything
+                    if not template_appeared and TEMPLATE_RE.search(revision.text.lower()): #TODO: Make sure this evaluated to False when we don't find anything
                         template_appeared = True
                         yield revision.id, "E"
-                    elif template_appeared and not TEMPLATE_RE.search(revision.text, flags=re.IGNORECASE):
+                    elif template_appeared and not TEMPLATE_RE.search(revision.text.lower()):
                         yield revision.id, "D"
                         break
                 except TypeError:

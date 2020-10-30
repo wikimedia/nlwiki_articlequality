@@ -58,6 +58,8 @@ def run(paths, threads, output):
                         break
                 except TypeError:
                     print("Revision.text was not a string")
+                else:
+                    print("Revision.text was a string")
     
     for rev_id, label in mwxml.map(process_template_changes, paths, threads):
         # Write the label to the output

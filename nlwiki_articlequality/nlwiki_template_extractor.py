@@ -63,6 +63,4 @@ def run(paths, threads, output):
     
     for rev_id, label in mwxml.map(process_template_changes, paths, threads):
         # Write the label to the output
-        output.write(json.dumps({'rev_id': rev_id, 'label': label}) + "\n")
-        print(json.dumps({'rev_id': rev_id, 'label': label}))
-        
+        json.dump({'rev_id': rev_id, 'label': label}, output)       

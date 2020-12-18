@@ -3,19 +3,18 @@ Process a collection of XML dumps looking for the introduction and removal of {{
 and assume the introduction represents a quality label ("E") and the removal represents the quality 
 label "D". Note: This script does not yet handle reverts (e.g. vandalism).  To do that, look into 
 the mwreverts libraray
-
 USAGE:
     nlwiki_template_extractor (-h|--help)
     nlwiki_template_extractor <xml-dump>... 
         [--processes=<num>]
         [--output=<path>]
-
+        [--debug]
 OPTIONS
     -h --help   Print this documentation
     <xml-dump>  Path to an XML dump to process (could be compressed gzip, bz2, etc.)
     --processes=<num>  Number of parallel processes to use for extraction [default: <cpu_count>]
     --output=<path>    Where to write the output file [default: <stdout>]
-
+    --debug     Print debug logging
 """
 import sys
 import docopt
@@ -23,12 +22,18 @@ import mwxml
 import json
 import re
 import multiprocessing
+import logging
 
 STUB_TEMPLATE_NAME = "beginnetje"
 TEMPLATE_RE = re.compile(r'{{\s*{0}'.format(STUB_TEMPLATE_NAME))  #TODO: Make sure this actually works
 
-def main():
-    args = docopt.docopt(__doc__)
+def main(argv=None):
+    args = docopt.docopt(__doc__, argv=argv)
+    
+    logging.basicConfig(
+        level=logging.INFO if not args['--debug'] else logging.DEBUG,
+        format='%(asctime)s %(levelname)s:%(name)s -- %(message)s'
+    )
     
     paths = args['<xml-dump>']
     if args['--processes'] == "<cpu_count>":
@@ -49,18 +54,23 @@ def run(paths, threads, output):
         for page in dump:
             template_appeared = False
             for revision in page:
-                try:
+                rev_doc = {'rev_id': revision.id, 
+                           'page_namespace': page.namespace, 
+                           'page_title': page.title, 
+                           'timestamp': str(revision.timestamp)}
+                if revision.text is not None:
                     if not template_appeared and TEMPLATE_RE.search(revision.text.lower()): #TODO: Make sure this evaluated to False when we don't find anything
                         template_appeared = True
-                        yield revision.id, "E"
+                        rev_doc['label'] = "E"
+                        yield rev_doc
                     elif template_appeared and not TEMPLATE_RE.search(revision.text.lower()):
-                        yield revision.id, "D"
+                        rev_doc['label'] = "D"
+                        yield rev_doc
                         break
-                except TypeError:
-                    print("Revision.text was not a string")
-                except AttributeError:
-                    print("Revision.text was not a string")
+                else:
+                    logging.warning("Revision.text for {0} is not a string".format(rev_doc))
     
-    for rev_id, label in mwxml.map(process_template_changes, paths, threads):
+    for label_doc in mwxml.map(process_template_changes, paths, threads):
         # Write the label to the output
-        json.dump({'rev_id': rev_id, 'label': label}, output)       
+        json.dump(label_doc, output)       
+        output.write("\n")

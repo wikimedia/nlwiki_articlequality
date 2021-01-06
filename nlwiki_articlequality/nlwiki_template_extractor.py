@@ -9,6 +9,7 @@ USAGE:
         [--processes=<num>]
         [--output=<path>]
         [--debug]
+        
 OPTIONS
     -h --help   Print this documentation
     <xml-dump>  Path to an XML dump to process (could be compressed gzip, bz2, etc.)

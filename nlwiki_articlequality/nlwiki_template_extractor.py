@@ -9,7 +9,7 @@ USAGE:
         [--processes=<num>]
         [--output=<path>]
         [--debug]
-        
+
 OPTIONS
     -h --help   Print this documentation
     <xml-dump>  Path to an XML dump to process (could be compressed gzip, bz2, etc.)
@@ -58,18 +58,21 @@ def run(paths, threads, output):
                 rev_doc = {'rev_id': revision.id, 
                            'page_namespace': page.namespace, 
                            'page_title': page.title, 
-                           'timestamp': str(revision.timestamp)}
+                           'timestamp': str(revision.timestamp),
+                           'username': str(revision.user.text) if revision.user is not None else None}
+
+
                 if revision.text is not None:
                     if not template_appeared and TEMPLATE_RE.search(revision.text.lower()): #TODO: Make sure this evaluated to False when we don't find anything
                         template_appeared = True
-                        rev_doc['label'] = "E"
+                        rev_doc['wp10'] = "E"
                         yield rev_doc
                     elif template_appeared and not TEMPLATE_RE.search(revision.text.lower()):
-                        rev_doc['label'] = "D"
+                        rev_doc['wp10'] = "D"
                         yield rev_doc
                         break
                 else:
-                    logging.warning("Revision.text for {0} is not a string".format(rev_doc))
+                    logging.debug("Revision.text for {0} is not a string".format(rev_doc))
     
     for label_doc in mwxml.map(process_template_changes, paths, threads):
         # Write the label to the output

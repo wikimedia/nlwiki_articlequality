@@ -1,5 +1,5 @@
 #!/usr/bin/env python
 
-from nlwiki_articlequality import nlwiki_template_extractor
+from nlwiki_articlequality import nlwiki_articlequality
 
-nlwiki_template_extractor.main()
+nlwiki_articlequality.main()

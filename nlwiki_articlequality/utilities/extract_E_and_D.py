@@ -3,9 +3,10 @@ Process a collection of XML dumps looking for the introduction and removal of {{
 and assume the introduction represents a quality label ("E") and the removal represents the quality 
 label "D". Note: This script does not yet handle reverts (e.g. vandalism).  To do that, look into 
 the mwreverts libraray
+
 USAGE:
-    nlwiki_template_extractor (-h|--help)
-    nlwiki_template_extractor <xml-dump>... 
+    extract_E_and_D (-h|--help)
+    extract_E_and_D <xml-dump>... 
         [--processes=<num>]
         [--output=<path>]
         [--debug]

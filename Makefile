@@ -3,7 +3,7 @@ datasets/nlwiki-20201101-E_and_D.json:
 
 
 datasets/nlwiki-20210116-A_B_and_C.json:
-	wget https://quarry.wmflabs.org/run/522840/output/0/json-lines -qO- > $@
+	wget https://quarry.wmflabs.org/run/527069/output/0/json-lines -qO- > $@
 
 datasets/nlwiki-20201101-E_and_D.no_bots.json: datasets/nlwiki-20201101-E_and_D.json
 	cat $< | grep -Pv '"username": ".*[bB]ot.*' > $@
@@ -15,9 +15,9 @@ datasets/nlwiki-20201101.balanced_sample.json: \
 		datasets/nlwiki-20201101-E_and_D.no_bots.json \
 		datasets/nlwiki-20210116-A_B_and_C.json \
                 datasets/nlwiki-20210130-B.json
-	(cat datasets/nlwiki-20201101-E_and_D.json | grep '"wp10": "E"' | shuf -n 350; \
-	 cat datasets/nlwiki-20201101-E_and_D.json | grep '"wp10": "D"' | shuf -n 350; \
-	 cat datasets/nlwiki-20210116-A_B_and_C.json | grep '"wp10": "C"' | shuf -n 350; \
-	 cat datasets/nlwiki-20210116-A_B_and_C.json datasets/nlwiki-20210130-B.json | grep '"wp10": "B"' | shuf -n 350; \
-	 cat datasets/nlwiki-20210116-A_B_and_C.json | grep '"wp10": "A"' | shuf -n 350) | shuf > $@
+	(cat datasets/nlwiki-20201101-E_and_D.json | grep '"wp10": "E"' | shuf -n 330; \
+	 cat datasets/nlwiki-20201101-E_and_D.json | grep '"wp10": "D"' | shuf -n 330; \
+	 cat datasets/nlwiki-20210116-A_B_and_C.json | grep '"wp10": "C"' | shuf -n 330; \
+	 cat datasets/nlwiki-20210116-A_B_and_C.json datasets/nlwiki-20210130-B.json | grep '"wp10": "B"' | shuf -n 330; \
+	 cat datasets/nlwiki-20210116-A_B_and_C.json | grep '"wp10": "A"' | shuf -n 330) | shuf > $@
 
